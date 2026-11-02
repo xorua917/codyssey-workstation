@@ -1,0 +1,254 @@
+Script started on 2026-11-03 00:37:41+09:00 [TERM="xterm-256color" TTY="/dev/pts/7" COLUMNS="74" LINES="11"]
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mdocker --version[27m
+[7mdocker info[27m[A]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ docker --version
+docker info
+[?2004lDocker version 29.9.2, build a82e528
+Client:
+ Version:    29.9.2
+ Context:    default
+ Debug Mode: false
+ Plugins:
+  agent: Docker AI Agent Runner (Docker Inc.)
+    Version:  v1.152.0
+    Path:     /usr/local/lib/docker/cli-plugins/docker-agent
+  ai: Docker AI Agent - Ask Gordon (Docker Inc.)
+    Version:  v1.33.0
+    Path:     /usr/local/lib/docker/cli-plugins/docker-ai
+  buildx: Docker Buildx (Docker Inc.)
+    Version:  v0.38.1
+    Path:     /usr/local/lib/docker/cli-plugins/docker-buildx
+  compose: Docker Compose (Docker Inc.)
+    Version:  v5.6.1
+    Path:     /usr/local/lib/docker/cli-plugins/docker-compose
+  debug: Get a shell into any image or container (Docker Inc.)
+    Version:  0.49.0
+    Path:     /usr/local/lib/docker/cli-plugins/docker-debug
+  desktop: Docker Desktop commands (Docker Inc.)
+    Version:  4.97.0
+    Path:     /usr/local/lib/docker/cli-plugins/docker-desktop
+  dhi: CLI for managing Docker Hardened Images (Docker Inc.)
+    Version:  v0.0.9
+    Path:     /usr/local/lib/docker/cli-plugins/docker-dhi
+  extension: Manages Docker extensions (Docker Inc.)
+    Version:  v0.2.32
+    Path:     /usr/local/lib/docker/cli-plugins/docker-extension
+  init: Creates Docker-related starter files for your project (Docker Inc.)
+    Version:  v1.4.1
+    Path:     /usr/local/lib/docker/cli-plugins/docker-init
+  mcp: Docker MCP Plugin (Docker Inc.)
+    Version:  v0.44.2
+    Path:     /usr/local/lib/docker/cli-plugins/docker-mcp
+  model: Docker Model Runner (Docker Inc.)
+    Version:  v1.2.9
+    Path:     /usr/local/lib/docker/cli-plugins/docker-model
+  offload: Docker Offload (Docker Inc.)
+    Version:  v0.7.21
+    Path:     /usr/local/lib/docker/cli-plugins/docker-offload
+  pass: Docker Pass Secrets Manager Plugin (beta) (Docker Inc.)
+    Version:  v0.3.2
+    Path:     /usr/local/lib/docker/cli-plugins/docker-pass
+  sandbox: "docker sandbox" is deprecated, use Docker Sandboxes instead (Docker Inc.)
+    Version:  v0.13.0
+    Path:     /usr/local/lib/docker/cli-plugins/docker-sandbox
+  scout: Docker Scout (Docker Inc.)
+    Version:  v1.27.0
+    Path:     /usr/local/lib/docker/cli-plugins/docker-scout
+
+Server:
+ Containers: 0
+  Running: 0
+  Paused: 0
+  Stopped: 0
+ Images: 0
+ Server Version: 29.9.2
+ Storage Driver: overlayfs
+  driver-type: io.containerd.snapshotter.v1
+ Logging Driver: local
+ Cgroup Driver: cgroupfs
+ Cgroup Version: 2
+ Plugins:
+  Volume: local
+  Network: bridge host ipvlan macvlan null overlay
+  Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog
+ CDI spec directories:
+  /etc/cdi
+  /var/run/cdi
+ Discovered Devices:
+  cdi: docker.com/gpu=webgpu
+ Swarm: inactive
+ Runtimes: io.containerd.runc.v2 nvidia runc
+ Default Runtime: runc
+ Init Binary: docker-init
+ containerd version: b7a25261e029d68978bbf290df0a62fc819b3c51
+ runc version: v1.5.2-0-g29dd3dc2
+ init version: de40ad0
+ Security Options:
+  seccomp
+   Profile: builtin
+  cgroupns
+ Kernel Version: 6.18.54.1-microsoft-standard-WSL2
+ Operating System: Docker Desktop
+ OSType: linux
+ Architecture: x86_64
+ CPUs: 10
+ Total Memory: 7.445GiB
+ Name: docker-desktop
+ ID: ee7d44de-55c4-4fa6-9b0d-6d3ceb069e80
+ Docker Root Dir: /var/lib/docker
+ Debug Mode: false
+ HTTP Proxy: http.docker.internal:3128
+ HTTPS Proxy: http.docker.internal:3128
+ No Proxy: hubproxy.docker.internal
+ Labels:
+  com.docker.desktop.address=unix:///var/run/docker-cli.sock
+ Experimental: false
+ Insecure Registries:
+  hubproxy.docker.internal:5555
+  127.0.0.0/8
+  ::1/128
+ Live Restore Enabled: false
+ Firewall Backend: iptables
+
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mdocker run --name codyssey-h[27m[7me[27m[7mllo hello-world[27m[A]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ docker run --name codyssey-hello hello-world
+[?2004lUnable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+
+[1A[2K4f55086f7dd0: Pulling fs layer [1B[1A[2K4f55086f7dd0: Download complete [1B[1A[2K4f55086f7dd0: Extracting 1 s[1B[1A[2K4f55086f7dd0: Extracting 1 s[1B[1A[2K4f55086f7dd0: Pull complete [1B
+[1A[2Kd5e71e642bf5: Download complete [1BDigest: sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mdocker images[27m
+[7mdocker ps[27m
+[7mdocker ps -a[27m
+[7mdocker logs codyssey-hello[27m[A[A[A]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ docker images
+docker ps
+docker ps -a
+docker logs codyssey-hello
+[?2004l                                                      [1m[106m[30mi[0m[0m [96mInfo → [0m[0m [38;5;0m[48;5;14m U [0m In Use
+[39m[1mIMAGE[0m                [39m[1mID[0m             [39m[1mDISK USAGE[0m   [39m[1mCONTENT SIZE[0m   [39m[1mEXTRA[0m
+[34m[1mhello-world:latest[0m   [39mc567b231f656[0m       [39m25.9kB[0m         [39m9.49kB[0m   [38;5;0m[48;5;14m U [0m  
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+CONTAINER ID   IMAGE         COMMAND    CREATED              STATUS                          PORTS     NAMES
+0e8cd08cffb5   hello-world   "/hello"   About a minute ago   Exited (0) About a minute ago             codyssey-hello
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mexit[27mexit
+[?2004lexit
+
+Script done on 2026-11-03 00:41:10+09:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2026-11-03 00:42:48+09:00 [TERM="xterm-256color" TTY="/dev/pts/7" COLUMNS="74" LINES="11"]
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mdocker run -it --name codyss[27m[7me[27m[7my-ubuntu ubuntu:24.04 bash[27m[A]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ docker run -it --name codyssey-ubuntu ubuntu:24.04 bash
+[?2004lUnable to find image 'ubuntu:24.04' locally
+24.04: Pulling from library/ubuntu
+
+[1A[2K7a48b8f0e5c7: Pulling fs layer [1B[1A[2K7a48b8f0e5c7: Downloading  1.049MB/29.77MB[1B[1A[2K7a48b8f0e5c7: Downloading  2.097MB/29.77MB[1B[1A[2K7a48b8f0e5c7: Downloading  3.146MB/29.77MB[1B[1A[2K7a48b8f0e5c7: Downloading  4.194MB/29.77MB[1B[1A[2K7a48b8f0e5c7: Downloading  5.243MB/29.77MB[1B[1A[2K7a48b8f0e5c7: Downloading  5.243MB/29.77MB[1B
+[1A[2K98144013299c: Downloading  1.049MB/1.938MB[1B[2A[2K7a48b8f0e5c7: Downloading  6.291MB/29.77MB[2B[1A[2K98144013299c: Download complete [1B[2A[2K7a48b8f0e5c7: Downloading   7.34MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  8.389MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  9.437MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  10.49MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  11.53MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  12.58MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  13.63MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  15.73MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  16.78MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  17.83MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  18.87MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  19.92MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  20.97MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  22.02MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  23.07MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  25.17MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  26.21MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  27.26MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  28.31MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Downloading  29.36MB/29.77MB[2B[2A[2K7a48b8f0e5c7: Download complete [2B[2A[2K7a48b8f0e5c7: Extracting 1 s[2B[2A[2K7a48b8f0e5c7: Extracting 1 s[2B[2A[2K7a48b8f0e5c7: Extracting 1 s[2B[2A[2K7a48b8f0e5c7: Extracting 1 s[2B[2A[2K7a48b8f0e5c7: Pull complete [2BDigest: sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852
+Status: Downloaded newer image for ubuntu:24.04
+[?2004h]0;root@a92352056841: /root@a92352056841:/# [7mpwd[27m
+[7mls /[27m
+[7mecho "Hello from Ubuntu Container"[27m
+[7mcat /etc/os-release[27m[A[A[A# pwd
+ls /
+echo "Hello from Ubuntu Container"
+cat /etc/os-release
+[?2004l/
+[0m[01;36mbin[0m   [01;34mdev[0m  [01;34mhome[0m  [01;36mlib64[0m  [01;34mmnt[0m  [01;34mproc[0m  [01;34mrun[0m   [01;34msrv[0m  [30;42mtmp[0m  [01;34mvar[0m
+[01;34mboot[0m  [01;34metc[0m  [01;36mlib[0m   [01;34mmedia[0m  [01;34mopt[0m  [01;34mroot[0m  [01;36msbin[0m  [01;34msys[0m  [01;34musr[0m
+Hello from Ubuntu Container
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.5 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+[?2004h]0;root@a92352056841: /root@a92352056841:/# [K[7mexit[27mexit
+[?2004lexit
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mdocker ps -a[27mdocker ps -a
+[?2004lCONTAINER ID   IMAGE          COMMAND    CREATED         STATUS                      PORTS     NAMES
+a92352056841   ubuntu:24.04   "bash"     2 minutes ago   Exited (0) 10 seconds ago             codyssey-ubuntu
+0e8cd08cffb5   hello-world    "/hello"   7 minutes ago   Exited (0) 7 minutes ago              codyssey-hello
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mdocker start -ai codyssey-ub[27m[7mu[27m[7mntu[27m[A]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ docker start -ai codyssey-ubuntu
+[?2004l[?2004h]0;root@a92352056841: /root@a92352056841:/# [7mecho "Container Restart Success"[27m
+[7mexit[27m[A@a92352056841:/# echo "Container Restart Success"
+exit
+[?2004lContainer Restart Success
+exit
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mdocker run -d --name codysse[27m[7my[27m[7m-worker ubuntu:24.04 sleep infinity[27m[A]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ docker run -d --name codyssey-worker ubuntu:24.04 sleep infinity
+[?2004la4943cbb4393e358be1101b2ff4c81de8881ea8b82e02b4d9dbaa66ef7041dc3
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mdocker ps[27mdocker ps
+[?2004lCONTAINER ID   IMAGE          COMMAND            CREATED         STATUS         PORTS     NAMES
+a4943cbb4393   ubuntu:24.04   "sleep infinity"   5 seconds ago   Up 5 seconds             codyssey-worker
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mdocker exec codyssey-worker [27m[7me[27m[7mcho "Docker Exec Success"[27m[A]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ docker exec codyssey-worker echo "Docker Exec Success"
+[?2004lDocker Exec Success
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mdocker stats --no-stream cod[27m[7my[27m[7mssey-worker[27m[A]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ docker stats --no-stream codyssey-worker
+[?2004lCONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O     PIDS
+a4943cbb4393   codyssey-worker   0.00%     1.559MiB / 7.445GiB   0.02%     1.17kB / 126B   73.7kB / 0B   1
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mdocker stop codyssey-worker[27m
+[7mdocker ps -a[27m
+[7mdocker start codyssey-worker[27m
+[7mdocker ps[27m[A[A[A]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ docker stop codyssey-worker
+docker ps -a
+docker start codyssey-worker
+docker ps
+[?2004lcodyssey-worker
+CONTAINER ID   IMAGE          COMMAND            CREATED          STATUS                                PORTS     NAMES
+a4943cbb4393   ubuntu:24.04   "sleep infinity"   2 minutes ago    Exited (137) Less than a second ago             codyssey-worker
+a92352056841   ubuntu:24.04   "bash"             5 minutes ago    Exited (0) 2 minutes ago                        codyssey-ubuntu
+0e8cd08cffb5   hello-world    "/hello"           10 minutes ago   Exited (0) 10 minutes ago                       codyssey-hello
+codyssey-worker
+CONTAINER ID   IMAGE          COMMAND            CREATED         STATUS                  PORTS     NAMES
+a4943cbb4393   ubuntu:24.04   "sleep infinity"   2 minutes ago   Up Less than a second             codyssey-worker
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mdocker stop codyssey-worker[27mdocker stop codyssey-worker
+[?2004lcodyssey-worker
+[?2004h]0;rua02@DESKTOP-5JN95HA: ~/codyssey-workstation[01;32mrua02@DESKTOP-5JN95HA[00m:[01;34m~/codyssey-workstation[00m$ [7mexit[27mexit
+[?2004lexit
+
+Script done on 2026-11-03 00:48:26+09:00 [COMMAND_EXIT_CODE="0"]
