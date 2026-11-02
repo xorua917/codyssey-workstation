@@ -40,10 +40,11 @@ Windows의 WSL 2에서 Ubuntu와 VS Code를 연동하고, Linux CLI로 파일·�
 - [x] 포트 매핑 및 HTTP 접속 확인 (8080)
 - [x] 바인드 마운트 수정 전후 확인 (8081)
 - [x] Docker 볼륨을 컨테이너에 연결하고 삭제 후 데이터 유지 검증
-- [x] Git 사용자 이름·이메일·기본 브랜치 설정 (로컬에서 확인; 공개 증거 로그는 추가 예정)
+- [x] Git 사용자 이름·이메일·기본 브랜치 설정 (로컬에서 확인)
 - [x] Git 저장소 초기화 (`git init -b main`) 및 `main` 브랜치 확인
-- [ ] GitHub 원격 저장소 연결 및 Push 확인
-- [ ] VS Code의 GitHub 로그인 및 저장소 연동 스크린샷 첨부
+- [x] GitHub 원격 저장소 연결 및 Push 확인 (최초 커밋 `fad215b`)
+- [x] VS Code의 WSL Git 통합 및 GitHub 원격 연결 스크린샷 확보
+- [ ] VS Code 내 GitHub 계정 로그인 여부는 별도 확인 필요 (공식 요구 시)
 - [ ] 전체 README·증거 링크 최종 검토 및 제출
 
 ## 4. 프로젝트 파일 구조
@@ -69,7 +70,12 @@ codyssey-workstation/
     │   └── 05_volume.log
     └── screenshots/
         ├── port-8080.png
-        └── port-8081.png
+        ├── port-8081.png
+        ├── cli-permissions.png
+        ├── docker-operations.png
+        ├── docker-build.png
+        ├── volume-persistence.png
+        └── vscode-github.png
 ```
 
 > 파일 목록은 실제 로컬 실습 결과를 기준으로 작성했습니다. 빈 디렉터리(`practice/secure-dir`)는 Git에 자동으로 업로드되지 않을 수 있습니다. 평가에 필요한 권한 변경 전후 기록은 로그에 있습니다.
@@ -78,7 +84,7 @@ codyssey-workstation/
 
 ### 5-1. Linux CLI와 권한
 
-[실제 터미널 로그 보기](evidence/logs/01_terminal.log)
+[실제 터미널 로그 보기](evidence/logs/01_terminal.log) · [권한 변경 전후 캡처](evidence/screenshots/cli-permissions.png)
 
 ```bash
 pwd
@@ -89,6 +95,7 @@ touch hello.txt
 echo "Hello Codyssey" > hello.txt
 cat hello.txt
 # Hello Codyssey
+cd ../..  # 프로젝트 루트로 복귀
 ```
 
 파일 복사·이름 변경·삭제를 수행했습니다.
@@ -102,6 +109,7 @@ rm practice/cli/renamed.txt
 파일과 디렉터리의 권한을 설정하고 변경 전후를 비교했습니다.
 
 ```bash
+mkdir -p practice/secure-dir
 chmod 644 practice/cli/hello.txt
 chmod 755 practice/secure-dir
 stat -c '%a %A %n' practice/cli/hello.txt practice/secure-dir
@@ -121,7 +129,7 @@ stat -c '%a %A %n' practice/cli/hello.txt practice/secure-dir
 
 ### 5-2. Docker 설치 확인 및 컨테이너 운영
 
-[실제 Docker 운영 로그 보기](evidence/logs/02_docker_basics.log)
+[실제 Docker 운영 로그 보기](evidence/logs/02_docker_basics.log) · [이미지·컨테이너 목록 캡처](evidence/screenshots/docker-operations.png)
 
 ```bash
 docker --version
@@ -178,6 +186,7 @@ docker ps
 - 커스텀 포인트: 이미지 제목을 나타내는 `LABEL`, 직접 작성한 정적 웹페이지를 복사하는 `COPY`, 서비스 포트를 문서화하는 `EXPOSE 80`
 - 작성 파일: [Dockerfile](Dockerfile), [site/index.html](site/index.html)
 - [실제 웹 서버 빌드 및 실행 로그](evidence/logs/03_web_server.log)
+- [커스텀 이미지 빌드 성공 캡처](evidence/screenshots/docker-build.png)
 
 ```dockerfile
 FROM nginx:alpine
@@ -230,7 +239,7 @@ curl http://127.0.0.1:8081/change.txt
 
 ### 5-5. Docker 볼륨 영속성
 
-[실제 Docker 볼륨 로그](evidence/logs/05_volume.log)
+[실제 Docker 볼륨 로그](evidence/logs/05_volume.log) · [컨테이너 삭제 전후 데이터 보존 캡처](evidence/screenshots/volume-persistence.png)
 
 ```bash
 docker volume create codyssey-volume-data
@@ -264,7 +273,14 @@ docker volume ls
 - **해결:** 출력 문구는 명령이 아니므로 별도로 실행하지 않고, 실제 명령인 `echo "BIND_MOUNT_AFTER" > practice/bind-site/change.txt` 및 `curl http://127.0.0.1:8081/change.txt`를 실행
 - **결과:** `BIND_MOUNT_AFTER` 정상 출력
 
-### 사례 B — 컨테이너 중지 후 `Exited (137)` 표시
+### 사례 B — 브라우저 접속 시 `404 Not Found`
+
+- **문제:** 바인드 마운트 확인을 위해 브라우저에서 주소를 열었으나 NGINX 404 화면이 표시됨
+- **원인:** 주소에 불필요한 `**` 문자가 붙어 실제 파일 경로 `/change.txt`와 달랐음 (`?utm_source=chatgpt.com`은 조회용 매개변수이므로 404의 직접 원인이 아님)
+- **해결:** 주소를 `http://localhost:8081/change.txt`로 정확히 수정한 후 새로고침
+- **검증:** [수정 후 `BIND_MOUNT_AFTER`가 표시된 브라우저 캡처](evidence/screenshots/port-8081.png)
+
+### 참고 사례 C — 컨테이너 중지 후 `Exited (137)` 표시
 
 - **문제:** `docker stop codyssey-worker` 후 상태를 확인했을 때 `Exited (137)` 관찰
 - **원인 가설:** 종료 과정에서 주 프로세스가 SIGKILL로 종료된 상황. 중지 제한시간 초과 가능성 등이 있으나 **정확한 원인은 이 로그만으로 확정할 수 없음**
@@ -287,7 +303,7 @@ git config --global --list
 # init.defaultbranch=main
 ```
 
-**현재 상태:** Git 사용자 정보와 기본 브랜치 설정을 완료했고, 프로젝트 폴더에서 `git init -b main`을 실행하여 로컬 Git 저장소를 초기화했습니다. `git status`에서 `On branch main`, `No commits yet` 및 미추적 파일을 확인했습니다. **아직 첫 커밋, GitHub 원격 저장소 연결 및 Push, VS Code GitHub 연동 스크린샷은 완료하지 않았습니다.** 해당 작업을 수행한 뒤 증거를 추가할 예정입니다.
+**현재 상태:** 로컬 Git 저장소를 `main` 브랜치로 초기화하고, 첫 커밋 `fad215b`를 생성해 GitHub의 `origin/main`으로 Push했습니다. VS Code(WSL: Ubuntu)의 Source Control과 GitHub 원격 연결도 확인했습니다. [VS Code·GitHub 연동 캡처](evidence/screenshots/vscode-github.png). 다만 VS Code 내 GitHub **계정 로그인 UI**는 이 캡처만으로 증명되지 않으므로 공식 미션에서 요구한다면 별도로 확인해야 합니다.
 
 ## 8. 평가자를 위한 재현 방법
 
@@ -333,9 +349,9 @@ docker run --rm --mount source=codyssey-review-data,target=/data \
 ## 9. 보안 및 제출 전 점검
 
 - [ ] 실제 로그에 비밀번호, 접근 토큰, SSH 개인키, 인증 코드가 포함되어 있지 않은지 확인
-- [ ] Git 설정의 이메일 주소 등 공개를 원치 않는 정보 마스킹
-- [ ] GitHub 원격 저장소 주소와 브랜치(`main`) 확인
+- [x] 개인 이메일을 Git 커밋에 사용하기로 선택함 (공개 저장소에서 노출 가능성을 인지)
+- [x] GitHub 원격 저장소 주소와 브랜치(`main`) 확인
 - [ ] README의 모든 상대 경로 링크 및 스크린샷 렌더링 확인
-- [ ] VS Code GitHub 로그인·연동 증거 추가
+- [x] VS Code Git 통합·GitHub 원격 연결 증거 추가 (계정 로그인 여부는 별도 확인)
 
-**GitHub 저장소 URL:** GitHub 저장소 생성 및 원격 연결 후 기재
+**GitHub 저장소 URL:** https://github.com/xorua917/codyssey-workstation
