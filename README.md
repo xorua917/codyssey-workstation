@@ -418,6 +418,15 @@ git config --global --list
 # user.name=RUA
 # user.email=[REDACTED]
 # init.defaultbranch=main
+
+# 추가 검증: git config --list (2026-11-04)
+git config --list
+# 주요 출력 발췌 (개인정보 비식별화)
+# user.name=RUA
+# user.email=[REDACTED] (2회 표시)
+# init.defaultbranch=main
+# remote.origin.url=[REDACTED]
+# 기타 환경별 설정은 생략
 ```
 
 **현재 상태:** 로컬 Git 저장소를 `main` 브랜치로 초기화하고, 첫 커밋 `fad215b`를 생성해 GitHub의 `origin/main`으로 Push했습니다. VS Code(WSL: Ubuntu)의 Source Control과 GitHub 원격 연결도 확인했습니다. [VS Code·GitHub 연동 캡처](evidence/screenshots/vscode-github.png). 추가로 VS Code 계정 메뉴에 `xorua917 (GitHub)`가 표시된 [GitHub 로그인 증빙](evidence/screenshots/vscode-github-auth.png)을 확보했습니다.
@@ -547,10 +556,12 @@ docker run --rm --mount source=codyssey-review-data,target=/data \
 
 ## 9. 보안 및 제출 전 점검
 
-- [ ] 실제 로그에 비밀번호, 접근 토큰, SSH 개인키, 인증 코드가 포함되어 있지 않은지 확인
+- [x] Git 추적 텍스트 파일에서 주요 토큰·개인키·이메일 패턴 검사 완료 (검출 없음)
+- [x] 증빙 이미지 11장 육안 점검 및 Git 추적 텍스트 파일의 주요 민감정보 패턴 검사 완료
 - [x] 개인 이메일을 Git 커밋에 사용하기로 선택함 (공개 저장소에서 노출 가능성을 인지)
 - [x] GitHub 원격 저장소 주소와 브랜치(`main`) 확인
-- [ ] README의 모든 상대 경로 링크 및 스크린샷 렌더링 확인
+- [x] README 상대 경로 링크 31개 확인 (누락 파일 0개)
+- [x] GitHub 이미지 파일 11개의 공개 페이지 및 미리보기 요소 확인
 - [x] VS Code Git 통합·GitHub 원격 연결 및 계정 로그인 증빙 추가
 
 **GitHub 저장소 URL:** https://github.com/xorua917/codyssey-workstation
