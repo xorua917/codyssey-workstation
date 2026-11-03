@@ -40,6 +40,7 @@ Windows의 WSL 2에서 Ubuntu와 VS Code를 연동하고, Linux CLI로 파일·�
 - [x] 포트 매핑 및 HTTP 접속 확인 (8080)
 - [x] 바인드 마운트 수정 전후 확인 (8081)
 - [x] Docker 볼륨을 컨테이너에 연결하고 삭제 후 데이터 유지 검증
+- [x] Docker 볼륨 백업(`tar.gz`) 및 별도 볼륨 복원 검증 (`DATA_PERSISTS` 일치)
 - [x] Git 사용자 이름·이메일·기본 브랜치 설정 (로컬에서 확인)
 - [x] Git 저장소 초기화 (`git init -b main`) 및 `main` 브랜치 확인
 - [x] GitHub 원격 저장소 연결 및 Push 확인 (최초 커밋 `fad215b`)
@@ -75,7 +76,8 @@ codyssey-workstation/
         ├── docker-operations.png
         ├── docker-build.png
         ├── volume-persistence.png
-        └── vscode-github.png
+        ├── vscode-github.png
+        └── volume-backup-restore.png
 ```
 
 > 파일 목록은 실제 로컬 실습 결과를 기준으로 작성했습니다. 빈 디렉터리(`practice/secure-dir`)는 Git에 자동으로 업로드되지 않을 수 있습니다. 평가에 필요한 권한 변경 전후 기록은 로그에 있습니다.
@@ -211,6 +213,50 @@ curl http://127.0.0.1:8080/
 
 **포트 매핑을 쓰는 이유:** 컨테이너 내부에서만 열려 있는 80번 포트의 서비스를 호스트의 8080번 포트로 전달해 브라우저에서 접근하기 위해서입니다. 여기서는 보안을 고려해 `127.0.0.1`에만 연결했습니다.
 
+#### 이미지와 컨테이너의 차이 — 빌드·실행·변경 반영 비교 (평가 항목 #12)
+
+| 구분 | 이미지(Image) | 컨테이너(Container) |
+| --- | --- | --- |
+| 역할 | 애플리케이션 실행에 필요한 파일·설정을 담은 **읽기 전용 템플릿** | 이미지를 기반으로 만들어 실제 프로세스가 동작하는 **실행 인스턴스** |
+| 생성 | `docker build -t codyssey-web:1.0 .` | `docker run -d --name codyssey-web-8080 -p 127.0.0.1:8080:80 codyssey-web:1.0` |
+| 변경 | `Dockerfile` 또는 `site/index.html` 변경 시 **이미지를 다시 빌드**해야 새 내용이 이미지에 포함됨 | 컨테이너는 이미지 위에 별도의 **쓰기 가능 계층**을 가짐. 기존 컨테이너가 새 이미지로 자동 전환되지는 않음 |
+| 종료·삭제 | 컨테이너를 종료·삭제해도 이미지 자체는 남음 | 컨테이너를 제거하면 그 컨테이너의 쓰기 가능 계층도 제거됨(마운트 데이터는 별도) |
+
+**본 미션의 변경 반영 비교:** `site/index.html`은 Dockerfile의 `COPY site/ ...`로 빌드 시점에 이미지에 포함되므로 호스트 원본을 편집하는 것만으로 기존 `codyssey-web-8080`의 웹페이지가 갱신되지 않습니다. 수정본을 배포하려면 **재빌드 → 기존 컨테이너 교체 → 재실행**이 필요합니다. 반면 `codyssey-bind-8081`은 `practice/bind-site`를 바인드 마운트했으므로 호스트 파일의 `BIND_MOUNT_BEFORE → BIND_MOUNT_AFTER` 변경이 **재빌드나 컨테이너 재시작 없이** 반영되었습니다. 후자의 실제 검증은 [바인드 마운트 로그](evidence/logs/04_bind_mount.log)와 [브라우저 캡처](evidence/screenshots/port-8081.png)에 기록되어 있습니다.
+
+이미지·컨테이너 연결을 확인하는 재현 명령어:
+
+```bash
+docker image inspect codyssey-web:1.0 --format 'Image: {{.RepoTags}}'
+docker inspect codyssey-web-8080 --format 'Container image ID: {{.Image}} | Running: {{.State.Running}}'
+```
+
+> 위 두 `inspect` 명령은 이미지와 실행 컨테이너의 연결을 확인하기 위한 추가 재현 예시입니다. 출력값을 새로 검증하기 전에는 실제 실행 로그로 간주하지 않습니다.
+
+#### 네트워크 네임스페이스와 포트 포워딩 원리 (평가 항목 #13)
+
+일반적인 Docker 브리지 네트워크의 컨테이너는 **별도의 네트워크 네임스페이스**를 사용합니다. 따라서 컨테이너는 호스트와 분리된 네트워크 인터페이스·IP 주소·라우팅·포트/소켓 공간을 가지며, 컨테이너 안의 NGINX가 `80`번 포트에서 대기한다고 해서 호스트의 `8080`번 포트가 자동으로 열리는 것은 아닙니다.
+
+```text
+Windows 브라우저: http://127.0.0.1:8080/
+                │ 호스트 127.0.0.1:8080으로 접속
+                ▼
+      Docker Desktop 포트 전달 계층
+                │ -p 127.0.0.1:8080:80
+                ▼
+      컨테이너의 격리된 네트워크 공간
+                │ 컨테이너 내부 80번 포트
+                ▼
+             NGINX 웹 서버
+```
+
+- `-p 127.0.0.1:8080:80`: **호스트 주소:호스트 포트:컨테이너 포트**를 지정하여 호스트의 로컬 접속을 컨테이너의 `80`번 포트로 전달합니다.
+- `EXPOSE 80`: 이미지에서 사용할 서비스 포트를 **문서화**하지만, 이것만으로 호스트 포트가 공개되지는 않습니다.
+- `127.0.0.1` 바인딩: 이 실습에서는 호스트의 루프백 주소에만 게시하여 외부 네트워크에 불필요하게 공개하지 않습니다.
+- 실습 증거: `docker ps`의 `127.0.0.1:8080->80/tcp`, `curl http://127.0.0.1:8080/` 응답 및 [8080 브라우저 캡처](evidence/screenshots/port-8080.png).
+
+참고: [Docker 공식 포트 게시 문서](https://docs.docker.com/engine/network/port-publishing/), [Docker Desktop 네트워킹](https://docs.docker.com/desktop/features/networking/).
+
 ### 5-4. 바인드 마운트 변경 반영
 
 [실제 바인드 마운트 로그](evidence/logs/04_bind_mount.log)
@@ -262,6 +308,58 @@ docker volume ls
 ```
 
 컨테이너 `codyssey-volume-before`를 삭제한 뒤 새 컨테이너 `codyssey-volume-after`를 같은 볼륨에 연결해 파일이 보존됨을 확인했습니다. **컨테이너의 수명과 볼륨 데이터의 수명은 별개**라는 것을 검증했습니다.
+
+### 5-6. Docker 볼륨 백업·복원·검증 절차 (평가 항목 #17)
+
+**영속성과 백업의 차이:** 볼륨 영속성은 컨테이너 삭제 후에도 같은 볼륨에 데이터가 남는다는 뜻입니다. **백업**은 데이터를 별도 아카이브(`.tar.gz`)에 복사하는 과정이며, **복원**은 그 아카이브를 새로운 볼륨에 풀어 원래 파일을 다시 읽을 수 있도록 하는 과정입니다.
+
+아래는 별도로 검증한 `codyssey-final-proof` 볼륨(`proof.txt`에 `DATA_PERSISTS` 저장)을 이용해 **2026-11-04에 실제 실행하고 성공을 확인한 추가 실습 절차**입니다. 원본 볼륨은 읽기 전용으로 마운트하고, 복구는 다른 이름의 볼륨으로 수행하여 원본 데이터를 보호합니다. 백업 아카이브는 Git 저장소 바깥의 홈 디렉터리에 보관합니다.
+
+```bash
+# 1. 원본 볼륨 존재 여부 확인 (없으면 여기서 중단)
+docker volume inspect codyssey-final-proof --format '{{.Name}}'
+
+# 2. 볼륨 데이터 백업: 원본 read-only, 호스트에 tar.gz 생성
+mkdir -p "$HOME/codyssey-volume-backup"
+docker run --rm \
+  -v codyssey-final-proof:/data:ro \
+  -v "$HOME/codyssey-volume-backup:/backup" \
+  ubuntu:24.04 tar -czf /backup/proof.tar.gz -C /data .
+ls -lh "$HOME/codyssey-volume-backup/proof.tar.gz"
+
+# 3. 신규 볼륨에 복원 (원본을 덮어쓰지 않음)
+docker volume create codyssey-restored-proof
+docker run --rm \
+  -v codyssey-restored-proof:/data \
+  -v "$HOME/codyssey-volume-backup:/backup:ro" \
+  ubuntu:24.04 tar -xzf /backup/proof.tar.gz -C /data
+
+# 4. 복원 검증
+docker run --rm -v codyssey-restored-proof:/data:ro \
+  ubuntu:24.04 cat /data/proof.txt
+# 실제 검증 출력: DATA_PERSISTS
+```
+
+**실제 검증 결과 (2026-11-04):** 백업 파일 `/home/rua02/codyssey-volume-backup/proof.tar.gz` 생성(166바이트)을 확인했습니다. `codyssey-restored-proof` 볼륨을 새로 만들고 아카이브를 압축 해제한 뒤, 원본 `codyssey-final-proof`와 복원 볼륨의 `/data/proof.txt`를 각각 조회했습니다. 두 볼륨 모두 `DATA_PERSISTS`를 출력하여 복원된 파일의 내용을 확인했습니다.
+
+```text
+=== BACKUP FILE ===
+-rw-r--r-- 1 root root 166 Nov  4 01:51 /home/rua02/codyssey-volume-backup/proof.tar.gz
+=== ORIGINAL VOLUME ===
+codyssey-final-proof
+=== RESTORED VOLUME ===
+codyssey-restored-proof
+=== ORIGINAL DATA ===
+DATA_PERSISTS
+=== RESTORED DATA ===
+DATA_PERSISTS
+```
+
+[볼륨 백업·복원 실제 실행 스크린샷](evidence/screenshots/volume-backup-restore.png)
+
+**검증 범위:** 이 테스트는 별도 파일로 백업한 뒤 **새 볼륨의 파일 내용이 원본과 동일한지** 확인한 것입니다. 파일 하나의 내용 일치를 확인한 것이므로 모든 파일의 메타데이터나 운영 중 서비스의 일관성까지 검증한 것은 아닙니다. 데이터가 계속 쓰이는 실무 환경에서는 백업 중 일관성을 보장하기 위해 쓰기를 일시 중지하거나 애플리케이션별 백업 방식을 사용해야 합니다.
+
+참고: [Docker 공식 볼륨 백업·복구 문서](https://docs.docker.com/engine/storage/volumes/#back-up-restore-or-migrate-data-volumes).
 
 ## 6. 트러블슈팅 (실제 수행 기록 기반)
 
@@ -317,6 +415,43 @@ docker run --rm -d --name codyssey-review-web -p 127.0.0.1:8090:80 codyssey-web:
 curl http://127.0.0.1:8090/
 docker stop codyssey-review-web
 ```
+
+### 호스트 포트 충돌 진단 및 해결 (평가 항목 #16)
+
+**증상 예시:** 포트를 이미 사용 중이면 컨테이너 시작 시 `port is already allocated` 또는 `bind: address already in use` 등의 오류가 발생할 수 있습니다. 이미 본 미션에서 사용한 `8080` 포트가 점유 중이라고 가정하고 다음 순서로 확인합니다.
+
+**1) 다른 Docker 컨테이너가 포트를 사용 중인지 확인 (WSL Bash):**
+
+```bash
+docker ps --format 'table {{.Names}}\t{{.Ports}}'
+# 출력의 PORTS에서 127.0.0.1:8080->80/tcp 등의 점유 여부 확인
+```
+
+**2) 호스트 운영체제에서 포트 점유 확인:** Docker Desktop은 Windows 호스트에서 포트를 전달할 수 있으므로, WSL의 `ss`만으로 모든 Windows 프로세스를 찾을 수는 없습니다.
+
+```bash
+# WSL/Linux 안에서 리스닝 소켓 확인
+ss -ltn '( sport = :8080 )'
+
+# Windows PowerShell에서 별도로 실행
+Get-NetTCPConnection -LocalPort 8080 -State Listen
+# 결과의 OwningProcess(PID)를 이용해 필요하면 다음 실행
+# Get-Process -Id <확인한_PID>
+```
+
+**3) 충돌 해결:** (A) 점유 중인 컨테이너가 **본인이 실행한 실습 컨테이너**로 확인되면 해당 컨테이너만 `docker stop <이름>`으로 중지합니다. (B) 다른 서비스가 포트를 사용한다면 그 서비스를 임의로 종료하지 않고, 사용하지 않는 다른 호스트 포트를 지정합니다. 컨테이너 내부 NGINX 포트 `80`은 유지합니다.
+
+```bash
+# 예시: 8080 대신 사용 가능한 8090 선택 (8090도 비어 있는지 먼저 확인)
+docker run --rm -d --name codyssey-review-alt \
+  -p 127.0.0.1:8090:80 codyssey-web:1.0
+curl http://127.0.0.1:8090/
+docker stop codyssey-review-alt
+```
+
+**4) 해결 확인:** `docker ps`의 포트 매핑과 `curl`의 정상 HTML 응답을 확인합니다. 동일한 컨테이너 이름이 이미 존재한다면 포트 문제와 구분하여 이름을 변경하거나 본인이 만든 중지된 컨테이너만 정리합니다.
+
+> 이 절은 **포트 충돌이 발생했을 때의 진단·조치 절차**입니다. 본 실습에서 실제로 포트 충돌이 발생했다고 주장하는 것은 아닙니다. 참고: [Docker Desktop 공식 트러블슈팅](https://docs.docker.com/desktop/troubleshoot-and-support/troubleshoot/topics/).
 
 바인드 마운트 재현:
 
