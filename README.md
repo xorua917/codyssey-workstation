@@ -45,7 +45,7 @@ Windows의 WSL 2에서 Ubuntu와 VS Code를 연동하고, Linux CLI로 파일·�
 - [x] Git 저장소 초기화 (`git init -b main`) 및 `main` 브랜치 확인
 - [x] GitHub 원격 저장소 연결 및 Push 확인 (최초 커밋 `fad215b`)
 - [x] VS Code의 WSL Git 통합 및 GitHub 원격 연결 스크린샷 확보
-- [ ] VS Code 내 GitHub 계정 로그인 여부는 별도 확인 필요 (공식 요구 시)
+- [x] VS Code 내 GitHub 계정 로그인 확인 ([증빙](evidence/screenshots/vscode-github-auth.png))
 - [ ] 전체 README·증거 링크 최종 검토 및 제출
 
 ## 4. 프로젝트 파일 구조
@@ -77,7 +77,10 @@ codyssey-workstation/
         ├── docker-build.png
         ├── volume-persistence.png
         ├── vscode-github.png
-        └── volume-backup-restore.png
+        ├── volume-backup-restore.png
+        ├── port-collision-error.png
+        ├── port-collision-resolved.png
+        └── vscode-github-auth.png
 ```
 
 > 파일 목록은 실제 로컬 실습 결과를 기준으로 작성했습니다. 빈 디렉터리(`practice/secure-dir`)는 Git에 자동으로 업로드되지 않을 수 있습니다. 평가에 필요한 권한 변경 전후 기록은 로그에 있습니다.
@@ -417,7 +420,7 @@ git config --global --list
 # init.defaultbranch=main
 ```
 
-**현재 상태:** 로컬 Git 저장소를 `main` 브랜치로 초기화하고, 첫 커밋 `fad215b`를 생성해 GitHub의 `origin/main`으로 Push했습니다. VS Code(WSL: Ubuntu)의 Source Control과 GitHub 원격 연결도 확인했습니다. [VS Code·GitHub 연동 캡처](evidence/screenshots/vscode-github.png). 다만 VS Code 내 GitHub **계정 로그인 UI**는 이 캡처만으로 증명되지 않으므로 공식 미션에서 요구한다면 별도로 확인해야 합니다.
+**현재 상태:** 로컬 Git 저장소를 `main` 브랜치로 초기화하고, 첫 커밋 `fad215b`를 생성해 GitHub의 `origin/main`으로 Push했습니다. VS Code(WSL: Ubuntu)의 Source Control과 GitHub 원격 연결도 확인했습니다. [VS Code·GitHub 연동 캡처](evidence/screenshots/vscode-github.png). 추가로 VS Code 계정 메뉴에 `xorua917 (GitHub)`가 표시된 [GitHub 로그인 증빙](evidence/screenshots/vscode-github-auth.png)을 확보했습니다.
 
 ## 8. 평가자를 위한 재현 방법
 
@@ -548,6 +551,6 @@ docker run --rm --mount source=codyssey-review-data,target=/data \
 - [x] 개인 이메일을 Git 커밋에 사용하기로 선택함 (공개 저장소에서 노출 가능성을 인지)
 - [x] GitHub 원격 저장소 주소와 브랜치(`main`) 확인
 - [ ] README의 모든 상대 경로 링크 및 스크린샷 렌더링 확인
-- [x] VS Code Git 통합·GitHub 원격 연결 증거 추가 (계정 로그인 여부는 별도 확인)
+- [x] VS Code Git 통합·GitHub 원격 연결 및 계정 로그인 증빙 추가
 
 **GitHub 저장소 URL:** https://github.com/xorua917/codyssey-workstation
