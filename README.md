@@ -311,6 +311,22 @@ docker volume ls
 
 ### 5-6. Docker 볼륨 백업·복원·검증 절차 (평가 항목 #17)
 
+#### 사전 준비 — 새 환경에서 원본 데이터 생성
+
+새 환경에서는 먼저 원본 볼륨과 데이터를 생성합니다.
+기존 파일이 있으면 덮어쓰지 않습니다.
+
+```bash
+docker volume create codyssey-final-proof
+docker run --rm -v codyssey-final-proof:/data ubuntu:24.04 sh -c 'test -e /data/proof.txt || echo DATA_PERSISTS > /data/proof.txt'
+docker run --rm -v codyssey-final-proof:/data:ro ubuntu:24.04 cat /data/proof.txt
+```
+
+예상 출력: `DATA_PERSISTS`
+
+이후 아래의 백업·복원 절차를 진행합니다.
+
+
 **영속성과 백업의 차이:** 볼륨 영속성은 컨테이너 삭제 후에도 같은 볼륨에 데이터가 남는다는 뜻입니다. **백업**은 데이터를 별도 아카이브(`.tar.gz`)에 복사하는 과정이며, **복원**은 그 아카이브를 새로운 볼륨에 풀어 원래 파일을 다시 읽을 수 있도록 하는 과정입니다.
 
 아래는 별도로 검증한 `codyssey-final-proof` 볼륨(`proof.txt`에 `DATA_PERSISTS` 저장)을 이용해 **2026-11-04에 실제 실행하고 성공을 확인한 추가 실습 절차**입니다. 원본 볼륨은 읽기 전용으로 마운트하고, 복구는 다른 이름의 볼륨으로 수행하여 원본 데이터를 보호합니다. 백업 아카이브는 Git 저장소 바깥의 홈 디렉터리에 보관합니다.
@@ -451,7 +467,52 @@ docker stop codyssey-review-alt
 
 **4) 해결 확인:** `docker ps`의 포트 매핑과 `curl`의 정상 HTML 응답을 확인합니다. 동일한 컨테이너 이름이 이미 존재한다면 포트 문제와 구분하여 이름을 변경하거나 본인이 만든 중지된 컨테이너만 정리합니다.
 
-> 이 절은 **포트 충돌이 발생했을 때의 진단·조치 절차**입니다. 본 실습에서 실제로 포트 충돌이 발생했다고 주장하는 것은 아닙니다. 참고: [Docker Desktop 공식 트러블슈팅](https://docs.docker.com/desktop/troubleshoot-and-support/troubleshoot/topics/).
+> 이 절은 **포트 충돌이 발생했을 때의 진단·조치 절차**입니다. 아래에는 별도로 수행한 실제 포트 충돌 검증 결과도 기록했습니다. 참고: [Docker Desktop 공식 트러블슈팅](https://docs.docker.com/desktop/troubleshoot-and-support/troubleshoot/topics/).
+
+
+#### 실제 포트 충돌 재현 및 해결 결과
+
+2026-11-04에 18080번 포트 충돌을 의도적으로 재현하고,
+18081번 포트로 변경하여 해결했습니다.
+
+**1. 포트 충돌 재현**
+
+~~~bash
+docker run -d --name codyssey-port-owner-demo -p 127.0.0.1:18080:80 codyssey-web:1.0
+docker run --name codyssey-port-conflict-demo -p 127.0.0.1:18080:80 codyssey-web:1.0
+~~~
+
+실제 오류: `Bind for 127.0.0.1:18080 failed: port is already allocated`
+
+[충돌 발생 증빙](evidence/screenshots/port-collision-error.png)
+
+**2. 원인 확인 및 해결**
+
+~~~bash
+docker ps --filter publish=18080
+docker port codyssey-port-owner-demo
+docker rm codyssey-port-conflict-demo
+docker run -d --name codyssey-port-solution-demo -p 127.0.0.1:18081:80 codyssey-web:1.0
+~~~
+
+**3. 해결 결과 검증**
+
+~~~bash
+curl -sSI http://127.0.0.1:18080/ | head -n 1
+curl -sSI http://127.0.0.1:18081/ | head -n 1
+docker ps --filter name=codyssey-port
+~~~
+
+실제 결과: 두 포트 모두 `HTTP/1.1 200 OK`를 반환했습니다.
+
+- `codyssey-port-owner-demo`: `127.0.0.1:18080->80/tcp`
+- `codyssey-port-solution-demo`: `127.0.0.1:18081->80/tcp`
+
+[충돌 해결 증빙](evidence/screenshots/port-collision-resolved.png)
+
+첫 실행 직후 18080번 포트에서 일시적인 연결 초기화 오류가
+발생했으나, 재확인 시 정상 응답했습니다.
+초기 오류의 정확한 원인은 확인되지 않았습니다.
 
 바인드 마운트 재현:
 
